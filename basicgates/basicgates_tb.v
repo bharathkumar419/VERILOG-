@@ -1,36 +1,44 @@
-module mux4x1_tb;
+module basic_gates_tb;
     // Inputs
-    reg D0, D1, D2, D3;
-    reg S0, S1;
-
-    // Output
-    wire Y;
-	 integer i;
-	 
-
-    // Instantiate the 4x1 MUX
-    mux4x1 DUT (.D0(D0), 
-						 .D1(D1), 
-						 .D2(D2), 
-						 .D3(D3),
-						 .S0(S0), 
-						 .S1(S1),
-						 .Y(Y) );
-
+    reg a, b;
+    
+    // Outputs
+    wire and_out, or_out, xor_out, nand_out, nor_out, xnor_out, not_a, not_b;
+    
+    // Instantiate the basic gates module
+    basic_gates DUT (
+        .a(a),
+        .b(b),
+        .and_out(and_out),
+        .or_out(or_out),
+        .xor_out(xor_out),
+        .nand_out(nand_out),
+        .nor_out(nor_out),
+        .xnor_out(xnor_out),
+        .not_a(not_a),
+        .not_b(not_b)
+    );
+    
+    integer i;
+    
     initial 
-	 begin
-		{D0,D1,D2,D3,S0,S1}=0;
-	 end
-	 initial
-	 begin
-		for (i=0;i>16;i=i+1);
-			begin 
-				{D0,D1,D2,D3,S0,S1}=i;
-					#10;
-			end
-				#30 $finish();
-		end
-initial
-$monitor("values of D0=%b, D1=%b, D2=%b, D3=%b, S0=%b,S1=%b, Y=%b", D0,D1,D2,D3,S0,S1,Y);
+    begin
+        {a, b} = 0;
+    end
+    
+    initial
+    begin
+        for (i = 0; i < 4; i = i + 1)
+        begin 
+            {a, b} = i;
+            #10;
+        end
+        #30 $finish();
+    end
+    
+    initial
+    begin
+        $monitor("Time=%0t, a=%b, b=%b | AND=%b, OR=%b, XOR=%b, NAND=%b, NOR=%b, XNOR=%b, NOT_a=%b, NOT_b=%b", 
+                $time, a, b, and_out, or_out, xor_out, nand_out, nor_out, xnor_out, not_a, not_b);
+    end
 endmodule
-
