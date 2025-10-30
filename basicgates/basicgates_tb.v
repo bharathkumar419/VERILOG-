@@ -1,80 +1,36 @@
-// Testbench with Tasks
-module tb_basic_gates;
-    
-    // Testbench signals
-    reg a, b;
-    wire and_out, or_out, xor_out, nand_out, nor_out, xnor_out, not_a, not_b;
-    
-    // Instantiate the design
-    basic_gates uut (
-        .a(a),
-        .b(b),
-        .and_out(and_out),
-        .or_out(or_out),
-        .xor_out(xor_out),
-        .nand_out(nand_out),
-        .nor_out(nor_out),
-        .xnor_out(xnor_out),
-        .not_a(not_a),
-        .not_b(not_b)
-    );
-    
-    // Initialize simulation
-    initial begin
-        $display("=== Basic Gates Simulation Started ===");
-        $display("Time\t a  b | AND OR XOR NAND NOR XNOR ~a ~b");
-        $display("------------------------------------------------");
-        
-        // Test all input combinations using tasks
-        test_input(1'b0, 1'b0);
-        test_input(1'b0, 1'b1);
-        test_input(1'b1, 1'b0);
-        test_input(1'b1, 1'b1);
-        
-        // Additional test patterns
-        $display("\n=== Additional Pattern Testing ===");
-        test_pattern_sequence();
-        
-        $display("\n=== Simulation Completed ===");
-        $finish;
-    end
-    
-    // Task to test specific input combination
-    task test_input;
-        input reg in_a;
-        input reg in_b;
-        begin
-            a = in_a;
-            b = in_b;
-            #10; // Wait for propagation
-            $display("%0t\t %b  %b |  %b   %b   %b    %b    %b    %b    %b   %b", 
-                    $time, a, b, and_out, or_out, xor_out, nand_out, 
-                    nor_out, xnor_out, not_a, not_b);
-        end
-    endtask
-    
-    // Task to test a sequence of patterns
-    task test_pattern_sequence;
-        begin
-            $display("Testing pattern sequence...");
-            
-            // Test alternating patterns
-            repeat(3) begin
-                test_input(1'b0, 1'b1);
-                test_input(1'b1, 1'b0);
-            end
-            
-            // Test same inputs
-            repeat(2) begin
-                test_input(1'b0, 1'b0);
-                test_input(1'b1, 1'b1);
-            end
-        end
-    endtask
-    
-    // Monitor to track changes automatically
-    initial begin
-        $monitor("Monitor: Time=%0t, a=%b, b=%b, AND=%b", $time, a, b, and_out);
-    end
-    
+module mux4x1_tb;
+    // Inputs
+    reg D0, D1, D2, D3;
+    reg S0, S1;
+
+    // Output
+    wire Y;
+	 integer i;
+	 
+
+    // Instantiate the 4x1 MUX
+    mux4x1 DUT (.D0(D0), 
+						 .D1(D1), 
+						 .D2(D2), 
+						 .D3(D3),
+						 .S0(S0), 
+						 .S1(S1),
+						 .Y(Y) );
+
+    initial 
+	 begin
+		{D0,D1,D2,D3,S0,S1}=0;
+	 end
+	 initial
+	 begin
+		for (i=0;i>16;i=i+1);
+			begin 
+				{D0,D1,D2,D3,S0,S1}=i;
+					#10;
+			end
+				#30 $finish();
+		end
+initial
+$monitor("values of D0=%b, D1=%b, D2=%b, D3=%b, S0=%b,S1=%b, Y=%b", D0,D1,D2,D3,S0,S1,Y);
 endmodule
+
